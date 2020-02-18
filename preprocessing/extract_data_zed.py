@@ -1,8 +1,11 @@
-import os, shutil
+import os, shutil, sys
 import argparse
 from natsort import natsorted
 import cv2
 import yaml
+
+sys.path.append('../')
+from utils import create_zip_archive
 
 """
 Example usage:
@@ -131,10 +134,15 @@ def main():
     extract_clouds()
     extract_depth()
 
+    #If all data is extracted it can be zipped using this function
+    if args.compress is not None:
+        create_zip_archive.create_zip_archive_stage_one(args.compress)
+    else: pass
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()  
     parser.add_argument("resolution", type=str, choices=['2k','fhd', 'hd', 'vga'],help="Resolution of recorded RGB-D frames.")
-
+    parser.add_argument("-c", "--compress", type=str, help="Specify archive name to compress extracted files.")
     args = parser.parse_args()
 
     main()

@@ -7,7 +7,7 @@ import numpy as np
 import cv2
 
 sys.path.append('../')
-from utils import prompt
+from utils import prompt, create_zip_archive
 
 """
 Example usage:
@@ -163,11 +163,17 @@ def main():
     pipeline = initialize_device(file = args.file)
     extract_data(pipeline)
 
+    #If all data is extracted it can be zipped using this function
+    if args.compress is not None:
+        create_zip_archive.create_zip_archive_stage_one(args.compress)
+    else: pass
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()  
     parser.add_argument("file", type=str, help=".Bag file to read")
     parser.add_argument("interval", type=int, help="How many frames to save: lower = more data / higher = less data")
     parser.add_argument("-l", "--length", type=int, help="Length of the recording (in Seconds)")
+    parser.add_argument("-c", "--compress", type=str, help="Specify archive name to compress extracted files.")
     args = parser.parse_args()
     
     main()
