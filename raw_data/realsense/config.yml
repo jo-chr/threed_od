@@ -1,0 +1,10 @@
+depth:
+  width: 640
+  height: 480
+  format: z16
+  fps: 30
+color:
+  width: 640
+  height: 480
+  format: rgb8
+  fps: 30
