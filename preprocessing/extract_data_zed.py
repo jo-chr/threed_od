@@ -5,7 +5,7 @@ import cv2
 import yaml
 
 sys.path.append('../')
-from utils import create_zip_archive
+from utils import zipping
 
 """
 Example usage:
@@ -136,7 +136,7 @@ def main():
 
     #If all data is extracted it can be zipped using this function
     if args.compress is not None:
-        create_zip_archive.create_zip_archive_stage_one(args.compress)
+        zipping.create_zip_archive_stage_one(args.compress)
     else: pass
 
 if __name__ == "__main__":

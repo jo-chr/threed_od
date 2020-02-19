@@ -1,0 +1,6 @@
+*.zip
+raw_data/
+preprocessing/temp_trainval/
+preprocessing/data/
+preprocessing/processed_data/
+__pycache__/
