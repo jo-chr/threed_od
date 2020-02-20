@@ -47,6 +47,19 @@ def create_zip_archive_stage_three(filename:str):
             zipf.write(filePath , filePath[lenDirPath :] )
     zipf.close()
 
+def create_zip_archive_stage_four(filename:str):
+    global DATA_DIR
+    DATA_DIR = '../preprocessing/temp_trainval/'
+
+    print('Zipping data')
+    zipf = zipfile.ZipFile(COMPR_DATASET_DIR + 'final_' + filename + '.zip', 'w', zipfile.ZIP_DEFLATED)
+    lenDirPath = len(DATA_DIR)
+    for root, _ , files in os.walk(DATA_DIR):
+        for file in files:
+            filePath = os.path.join(root, file)
+            zipf.write(filePath , filePath[lenDirPath :] )
+    zipf.close()
+
 def read_zip_archive(filename:str):
     global COMPR_DATASET_DIR, DATA_DIR
 

@@ -1,20 +1,29 @@
-import os
+import os, sys
 from natsort import natsorted
 import open3d as o3d
 import shutil
 import json
+import yaml
+import argparse
 import numpy as np
+
+sys.path.append('../')
+from utils import zipping
 
 DATA_DIR = 'processed_data/'
 CLOUD_DIR = DATA_DIR + 'cloud/'
 IMAGE_DIR = DATA_DIR + 'image/'
 LABEL_2D_DIR = DATA_DIR + 'label_2d/'
 LABEL_3D_DIR = DATA_DIR + 'label_3d/'
+CALIB_FILE = DATA_DIR + 'calib.yml'
+OBJECTCLASSES_FILE = DATA_DIR + 'objectclasses.json'
+
 DUMP_DIR = 'temp_trainval/'
-DUMP_CLOUD_DIR = DUMP_DIR + 'depth/'
+DUMP_CLOUD_DIR = DUMP_DIR + 'cloud/'
 DUMP_IMAGE_DIR = DUMP_DIR + 'image/'
 DUMP_LABEL_DIR = DUMP_DIR + 'label/'
 DUMP_CALIB_DIR = DUMP_DIR + 'calib/'
+DUMP_OBJECTCLASSES_FILE = DUMP_DIR + 'objectclasses.json'
 
 def make_directories():
     if not os.path.exists(DUMP_DIR):
@@ -28,8 +37,6 @@ def make_directories():
     if not os.path.exists(DUMP_CALIB_DIR):
         os.makedirs(DUMP_CALIB_DIR)
     
-    
-
 def write_point_clouds():
 
     for filename in natsorted(os.listdir(CLOUD_DIR)):
@@ -89,20 +96,70 @@ def write_labels():
         np.savetxt(DUMP_LABEL_DIR + three_d_filename.strip('.json') + '.txt', label, newline = ' ', fmt='%s') 
 
 def write_calib():
-    return
+
+    with open(CALIB_FILE) as file:
+        calib = yaml.load(file, Loader=yaml.FullLoader)
+
+    extrin = np.asarray(calib[1]['extrin'])
+    intrin = np.asarray(calib[0]['intrin'])
+    calib = np.vstack((extrin, intrin))
+
+    count = len([name for name in os.listdir(DUMP_IMAGE_DIR)])
+
+    for i in range(count):
+        print('Writing calibration file ' + str(i+1).zfill(4) + '.txt')
+        np.savetxt(DUMP_CALIB_DIR + str(i+1).zfill(4) + '.txt', calib, fmt='%s') 
+
+def write_split_files():
+
+    # get count of files and calculate train and test share depending on split size
+    count = len([name for name in os.listdir(DUMP_IMAGE_DIR)])
+    train_share = round(count * args.split)
+    test_share = count - train_share
+    
+    # shuffle randomly
+    np.random.seed(7331)
+    files = np.arange(1,count+1)
+    np.random.shuffle(files)
+
+    # create train and test data files
+    train_data = natsorted(files[:train_share])
+    test_data = natsorted(files[train_share:train_share + test_share])
+
+    with open(DUMP_DIR + 'train_data_idx.txt', 'w') as f:
+        f.write("\n".join(map(str, train_data)))
+
+    with open(DUMP_DIR + 'test_data_idx.txt', 'w') as f:
+        f.write("\n".join(map(str, test_data)))
 
 def main():
 
-    make_directories()
+    # Check if compressed data should be used - If yes, the 'data/' folder is emptied first and the archive is extracted into it
+    if args.compressed_data is not None:
+        for root, dirs, files in os.walk(DATA_DIR):
+            for f in files:
+                os.unlink(os.path.join(root, f))
+            for d in dirs:
+                shutil.rmtree(os.path.join(root, d))
+        zipping.read_zip_archive(args.compressed_data)
 
-    #write_point_clouds()
-    #write_images()
-    #write_labels()
+    make_directories()
+    write_point_clouds()
+    write_images()
+    write_labels()
+    write_calib()
+    write_split_files()
+    shutil.copyfile(OBJECTCLASSES_FILE, DUMP_OBJECTCLASSES_FILE)
+    zipping.create_zip_archive_stage_four(args.compress)
+    shutil.rmtree(DUMP_DIR)
     
 
-
-
-
 if __name__ == "__main__":
+
+    parser = argparse.ArgumentParser()  
+    parser.add_argument("compress", type=str, help="Specify archive name to compress transformed files.")
+    parser.add_argument("-s", "--split", type=int, default = 0.9, help="Specify train/(test) split size")
+    parser.add_argument("-cd", "--compressed_data", type=str, help="Specify archive name to load extraced files from.")
+    args = parser.parse_args()
 
     main()

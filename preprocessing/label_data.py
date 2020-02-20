@@ -118,6 +118,15 @@ def main():
     if not os.path.exists(LABEL_DIR):
         os.makedirs(LABEL_DIR) 
 
+    # Check if compressed data should be used - If yes, the 'data/' folder is emptied first and the archive is extracted into it
+    if args.compressed_data is not None:
+        for root, dirs, files in os.walk(DATA_DIR):
+            for f in files:
+                os.unlink(os.path.join(root, f))
+            for d in dirs:
+                shutil.rmtree(os.path.join(root, d))
+        zipping.read_zip_archive(args.compressed_data)
+
     existing_labels = check_existing_label() 
 
     # Skip first n clouds when they have been already labeled
