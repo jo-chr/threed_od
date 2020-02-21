@@ -1,6 +1,11 @@
 *.zip
+*.npy
+*.npz
+*.ipynb
 raw_data/
 preprocessing/temp_trainval/
 preprocessing/data/
 preprocessing/processed_data/
+data_viz_dump/
+trainval/
 __pycache__/
