@@ -6,7 +6,7 @@ This system consists of three steps: Preprocessing, Training and Inference.
 
 ## Preprocessing
 
-Steps to perform in order:
+Navigate to preprocessing/ and perform the following steps in order:
 
 1. extract_data_'device'.py
 2. preprocess_data.py
