@@ -98,10 +98,13 @@ def write_labels():
 def write_calib():
 
     with open(CALIB_FILE) as file:
-        calib = yaml.load(file, Loader=yaml.FullLoader)
+        calib = yaml.load(file)
 
     extrin = np.asarray(calib[1]['extrin'])
     intrin = np.asarray(calib[0]['intrin'])
+    # votenet Format:
+    intrin = [intrin[0],intrin[1], intrin[3], intrin[6], intrin[2], intrin[7], intrin[4], intrin[5], intrin[8]]
+
     calib = np.vstack((extrin, intrin))
 
     count = len([name for name in os.listdir(DUMP_IMAGE_DIR)])
@@ -129,7 +132,7 @@ def write_split_files():
     with open(DUMP_DIR + 'train_data_idx.txt', 'w') as f:
         f.write("\n".join(map(str, train_data)))
 
-    with open(DUMP_DIR + 'test_data_idx.txt', 'w') as f:
+    with open(DUMP_DIR + 'val_data_idx.txt', 'w') as f:
         f.write("\n".join(map(str, test_data)))
 
 def main():
@@ -158,7 +161,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()  
     parser.add_argument("compress", type=str, help="Specify archive name to compress transformed files.")
-    parser.add_argument("-s", "--split", type=int, default = 0.9, help="Specify train/(test) split size")
+    parser.add_argument("-s", "--split", type=int, default = 0.9, help="Specify train/(test) split size.")
     parser.add_argument("-cd", "--compressed_data", type=str, help="Specify archive name to load extraced files from.")
     args = parser.parse_args()
 
