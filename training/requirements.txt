@@ -4,3 +4,5 @@ opencv-python
 plyfile
 networkx>=2.2,<2.3
 trimesh>=2.35.39,<2.35.40
+jupyter==1.0.0
+jupyterlab==1.2.2
