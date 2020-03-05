@@ -15,6 +15,7 @@ from flask import Flask
 from flask import make_response
 from flask import request, send_from_directory
 from flask import abort
+from flask import jsonify
 from PIL import Image
 from scipy.special import softmax
 
@@ -189,7 +190,7 @@ def detect_cloud():
 
     #demo_dir = os.path.join(BASE_DIR, 'demo_files') 
 
-    checkpoint_path = os.path.join(model_conf['model_path'])
+    checkpoint_path = os.path.join(get_model_path(), model_conf['model_path'])
     #pc_path = os.path.join(demo_dir, 'test.ply')
 
     eval_config_dict = {'remove_empty_box': True, 'use_3d_nms': True, 'nms_iou': 0.25,
@@ -228,16 +229,32 @@ def detect_cloud():
     tic = time.time()
     with torch.no_grad():
         end_points = net(inputs)
+    
     toc = time.time()
     print('Inference time: %f'%(toc-tic))
     end_points['point_clouds'] = inputs['point_clouds']
     pred_map_cls = parse_predictions(end_points, eval_config_dict)
+    logger.debug(pred_map_cls)
     print('Finished detection. %d object detected.'%(len(pred_map_cls[0])))
-  
-    dump_dir = os.path.join(demo_dir, '%s_results'%(FLAGS.dataset))
+
+    output = []
+    
+    for i in range(len(pred_map_cls[0])):
+        prediction = {'class_id':pred_map_cls[0][i][0], 'probability':np.float64(pred_map_cls[0][i][2]),
+        'coordinates':{j:k for j,k in enumerate(pred_map_cls[0][i][1].tolist())}}
+        output.append(prediction)
+
+    print(output[0])
+    
+    return jsonify(output)
+
+    
+    '''
+    dump_dir = os.path.join('../dump/')
     if not os.path.exists(dump_dir): os.mkdir(dump_dir) 
     MODEL.dump_results(end_points, dump_dir, DC, True)
     print('Dumped detection results to folder %s'%(dump_dir))
+    '''
     
 
 @app.route('/api/version', methods=['GET'])
@@ -294,8 +311,6 @@ if __name__ == '__main__':
     parser.add_argument('--V','--version', action='version',version='%(prog)s ' + __version__)
     args = parser.parse_args()
 
-    '''
-    lokal:
     if args == 'version':
         parser.parse_args(['--version'])
     else:
@@ -306,4 +321,4 @@ if __name__ == '__main__':
         parser.parse_args(['--version'])
     else:
         app.run(debug=True)
-
+    '''
