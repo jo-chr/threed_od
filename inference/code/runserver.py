@@ -34,11 +34,6 @@ from pc_util import random_sampling, read_ply
 from ap_helper import parse_predictions
 from detection_dataset import DC # dataset config
 
-# global variables for models and model IDs
-DET_MODEL = {
-    'model': None,
-    'model_id': 0 
-}
 
 app = Flask(__name__)
 
@@ -186,18 +181,14 @@ def detect_cloud():
 
     #get and validate cloud file
     cloud_file = get_cloud(request)
-    check_file(cloud_file)
-
-    #demo_dir = os.path.join(BASE_DIR, 'demo_files') 
+    #check_file(cloud_file)
 
     checkpoint_path = os.path.join(get_model_path(), model_conf['model_path'])
-    #pc_path = os.path.join(demo_dir, 'test.ply')
 
     eval_config_dict = {'remove_empty_box': True, 'use_3d_nms': True, 'nms_iou': 0.25,
         'use_old_type_nms': False, 'cls_nms': False, 'per_class_proposal': False,
         'conf_thresh': 0.15, 'dataset_config': DC}
 
-    
     # Init the model and optimzier
     MODEL = importlib.import_module('votenet') # import network module
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -209,7 +200,7 @@ def detect_cloud():
     print('Constructed model.')
     
     # Load checkpoint
-    optimizer = optim.Adam(net.parameters(), lr=0.001)
+    optimizer = optim.Adam(net.parameters(), lr=0.01)
     checkpoint = torch.load(checkpoint_path)
     net.load_state_dict(checkpoint['model_state_dict'])
     optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
@@ -237,25 +228,19 @@ def detect_cloud():
     logger.debug(pred_map_cls)
     print('Finished detection. %d object detected.'%(len(pred_map_cls[0])))
 
+    dump_dir = os.path.join('../dump/')
+    if not os.path.exists(dump_dir): os.mkdir(dump_dir) 
+    MODEL.dump_results(end_points, dump_dir, DC, True)
+    print('Dumped detection results to folder %s'%(dump_dir))
+
     output = []
     
     for i in range(len(pred_map_cls[0])):
         prediction = {'class_id':pred_map_cls[0][i][0], 'probability':np.float64(pred_map_cls[0][i][2]),
         'coordinates':{j:k for j,k in enumerate(pred_map_cls[0][i][1].tolist())}}
         output.append(prediction)
-
-    print(output[0])
     
     return jsonify(output)
-
-    
-    '''
-    dump_dir = os.path.join('../dump/')
-    if not os.path.exists(dump_dir): os.mkdir(dump_dir) 
-    MODEL.dump_results(end_points, dump_dir, DC, True)
-    print('Dumped detection results to folder %s'%(dump_dir))
-    '''
-    
 
 @app.route('/api/version', methods=['GET'])
 def get_api_version():

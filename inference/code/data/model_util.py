@@ -20,7 +20,7 @@ class DatasetConfig(object):
         self.type2class={'box':0}
         self.class2type = {self.type2class[t]:t for t in self.type2class}
         self.type2onehotclass={'box':0}
-        self.type_mean_size = {'box': np.array([725,653,336])}
+        self.type_mean_size = {'box': np.array([0.75,0.57,0.534])}
 
         self.mean_size_arr = np.zeros((self.num_size_cluster, 3))
         for i in range(self.num_size_cluster):

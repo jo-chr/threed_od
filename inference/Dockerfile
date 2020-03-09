@@ -49,4 +49,7 @@ RUN pip install torch==1.1.0 torchvision==0.3.0 -f https://download.pytorch.org/
 
 ENV UWSGI_INI /data_static/uwsgi.ini
 
+WORKDIR /code/pointnet2
+RUN python3 setup.py install
+
 WORKDIR /code

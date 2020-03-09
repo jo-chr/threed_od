@@ -11,6 +11,7 @@ import sys
 import numpy as np
 from datetime import datetime
 import argparse
+import time
 import importlib
 import torch
 import torch.nn as nn
@@ -135,8 +136,12 @@ def evaluate_one_epoch():
         
         # Forward pass
         inputs = {'point_clouds': batch_data_label['point_clouds']}
+
+        tic = time.time()
         with torch.no_grad():
             end_points = net(inputs)
+        toc = time.time()
+        print('Inference time: %f'%(toc-tic))
 
         # Compute loss
         for key in batch_data_label:

@@ -3,6 +3,8 @@
 *.npz
 *.ipynb
 raw_data/
+logs/
+dump/
 preprocessing/temp_trainval/
 preprocessing/data/
 preprocessing/processed_data/
