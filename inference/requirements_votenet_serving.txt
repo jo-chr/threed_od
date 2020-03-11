@@ -3,6 +3,7 @@ scipy==1.3.1
 pillow==5.0.0
 numpy==1.18.1
 plyfile
+networkx>=2.2,<2.3
 trimesh>=2.35.39,<2.35.40
 matplotlib
 opencv-python
