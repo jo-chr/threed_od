@@ -26,6 +26,7 @@ def processing_loop():
         print('----- Processing point cloud ' + str(i) + ' -----')
         pcd = o3d.io.read_point_cloud(DATA_DIR + 'cloud/' + filename)
         print('Points before transformation: ' + str(len(pcd.points)))
+        o3d.io.write_point_cloud(PROCESSED_DATA_DIR + 'demonstration/' + 'downsampled_' + filename, pcd) ###
 
         # Function to downsample input pointcloud into output pointcloud with a voxel
         pcd = pcd.voxel_down_sample(voxel_size=args.voxel_size)
@@ -35,6 +36,7 @@ def processing_loop():
         pcd = pcd.remove_statistical_outlier(nb_neighbors=args.nb_neighbors,std_ratio=args.std_ratio)
         pcd = pcd[0]
         print('Points after outlier removal: ' + str(len(pcd.points)))
+        o3d.io.write_point_cloud(PROCESSED_DATA_DIR + 'demonstration/' + 'outlier_removed_' + filename, pcd) ###
         
         # Point cloud rotation --> votenet expects z=up, y=forward, x=right-ward
         # Function rotate() seems to have bugs in o3d 0.9.0, only trial and error works
@@ -48,6 +50,8 @@ def make_directories():
     """Make directories for output."""
     if not os.path.exists(PROCESSED_DATA_DIR + 'cloud/'):
         os.makedirs(PROCESSED_DATA_DIR + 'cloud/')
+    if not os.path.exists(PROCESSED_DATA_DIR + 'demonstration/'):
+        os.makedirs(PROCESSED_DATA_DIR + 'demonstration/')
     if not os.path.exists(PROCESSED_DATA_DIR + 'image/'):
         os.makedirs(PROCESSED_DATA_DIR + 'image/')
     if not os.path.exists(PROCESSED_DATA_DIR + 'depth/'):

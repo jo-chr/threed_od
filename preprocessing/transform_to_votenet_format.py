@@ -98,7 +98,7 @@ def write_labels():
 def write_calib():
 
     with open(CALIB_FILE) as file:
-        calib = yaml.load(file)
+        calib = yaml.load(file, Loader=yaml.FullLoader)
 
     extrin = np.asarray(calib[1]['extrin'])
     intrin = np.asarray(calib[0]['intrin'])

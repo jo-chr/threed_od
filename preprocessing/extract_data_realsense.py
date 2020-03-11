@@ -31,7 +31,7 @@ CALIB_FILE = ''
 def read_config():
     """Read camera config from yaml file."""
     with open(RS_CONFIG_FILE , 'r') as ymlfile:
-        cfg = yaml.load(ymlfile)
+        cfg = yaml.load(ymlfile, Loader=yaml.FullLoader)
     return cfg
 
 def get_file_count():
