@@ -161,7 +161,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()  
     parser.add_argument("compress", type=str, help="Specify archive name to compress transformed files.")
-    parser.add_argument("-s", "--split", type=int, default = 0.9, help="Specify train/(test) split size.")
+    parser.add_argument("-s", "--split", type=float, default = 0.9, help="Specify train/(test) split size.")
     parser.add_argument("-cd", "--compressed_data", type=str, help="Specify archive name to load extraced files from.")
     args = parser.parse_args()
 
