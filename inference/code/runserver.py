@@ -5,6 +5,7 @@ import logging
 import logging.handlers as handlers
 import numpy as np
 import time
+import open3d as o3d
 import math
 import argparse
 import importlib
@@ -228,11 +229,19 @@ def detect_cloud():
     logger.debug(pred_map_cls)
     print('Finished detection. %d object detected.'%(len(pred_map_cls[0])))
 
+    print(pred_map_cls[0][0][1])
+
+    pcd = o3d.geometry.PointCloud()
+    pcd.points = o3d.utility.Vector3dVector(pred_map_cls[0][0][1])
+    pcd.rotate(pcd.get_rotation_matrix_from_xyz([300,0,0]), center=False)
+    coords = np.asarray(pcd.points)
+    print(coords)
+
     output = []
     
     for i in range(len(pred_map_cls[0])):
-        prediction = {'class_id':pred_map_cls[0][i][0], 'probability':np.float64(pred_map_cls[0][i][2]),
-        'coordinates':{j:k for j,k in enumerate(pred_map_cls[0][i][1].tolist())}}
+        prediction = {'class':'box', 'confidence':np.float64(pred_map_cls[0][i][2]),
+        'coordinates':{j:k for j,k in enumerate(coords.tolist())}}
         output.append(prediction)
     
     return jsonify(output)
@@ -306,7 +315,7 @@ def detect_cloud_dump():
     output = []
     
     for i in range(len(pred_map_cls[0])):
-        prediction = {'class_id':pred_map_cls[0][i][0], 'probability':np.float64(pred_map_cls[0][i][2]),
+        prediction = {'class_id':pred_map_cls[0][i][0], 'confidence':np.float64(pred_map_cls[0][i][2]),
         'coordinates':{j:k for j,k in enumerate(pred_map_cls[0][i][1].tolist())}}
         output.append(prediction)
     
@@ -365,7 +374,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(prog='PyTorch WebAPI')
     parser.add_argument('--V','--version', action='version',version='%(prog)s ' + __version__)
     args = parser.parse_args()
-    '''
+    
     if args == 'version':
         parser.parse_args(['--version'])
     else:
@@ -376,4 +385,5 @@ if __name__ == '__main__':
         parser.parse_args(['--version'])
     else:
         app.run(debug=True)
+    '''
 
