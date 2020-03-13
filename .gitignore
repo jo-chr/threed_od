@@ -1,7 +1,7 @@
 *.zip
 *.npy
 *.npz
-*.ipynb
+.ipynb_checkpoints/
 raw_data/
 logs/
 dump/
