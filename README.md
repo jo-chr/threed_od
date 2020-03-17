@@ -2,48 +2,14 @@
 
 ## Introduction
 
-This system consists of three steps: Preprocessing, Training and Inference.
+This is a system that covers all aspects of a 3D object recognition pipeline. It essentially consists of three main phases: [Data preprocessing](/preprocessing/README.md), [training](/training/README.md) and [inference](/inference/README.md). The individual steps are described in more detail in the respective directories. But first you have to place your raw data in this project.
 
-## Preprocessing
+## Raw Data
 
-Navigate to preprocessing/ and perform the following steps in order:
+So far, this project supports two sensor devices: Intel RealSense and StereoLabs ZED. Exemplary data is provided for both devices. In the case of the RealSense, the data has not yet been extracted and is stored in `.bag` files. In case of the ZED, the data has already been extracted (RGB images, depth maps, point clouds). 
 
-1. extract_data_'device'.py
-2. preprocess_data.py
-3. label_data.py
-4. transform_to_votenet_format.py
+Create a directory `raw_data/` and place the exemplary data in it.
 
-## Training
+## Special System Requirements
 
-### Set up Training Container
-
-Build Docker container using the provided Dockerfile.
-
-    docker build -t training_3d .
-
-Run Docker container:
-
-    docker run -it --runtime nvidia 'container_id' /bin/bash 
-
-Copy preprocessed files into container:
-
-    docker cp /home/jonas/Desktop/Projekte/threed_od/training/trainval/ 04b:/usr/local/training/votenet/data/
-
-### Prepare data
-
-To check, if the data was preprocessed right, navigate to data/ folder and run
-
-    python data.py --viz
-
-This will visualize the point clouds, ground truth 3D bounding boxes, 2D bounding boxes and projected depth maps.
-The results are dumped in data/data_viz_dump/
-
-Generate data set
-
-    python data.py --gen_data
-
-### Run training
-
-Run trainng using the following command:
-
-    CUDA_VISIBLE_DEVICES=0 python3 train.py --log_dir 'log_dir_name'
+Note that the containerized training environment and inference API run on a Linux distribution using the NVIDIA runtime environment. Therefore, the host system itself must be a Linux distribution and have CUDA and cuDNN installed. For more information, refer to the corresponding README files. 
