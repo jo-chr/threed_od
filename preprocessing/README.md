@@ -41,7 +41,7 @@ Example for the ZED:
 Run `python label_data.py` to annotate the processed point clouds. Following, the basic controls of the tool are described.
 
 | Key           | Description                                              |
-| ------------- |:--------------------------------------------------------:|
+| ------------- |----------------------------------------------------------|
 | Left mouse button + drag   | Rotate point cloud                          |             
 | Wheel mouse button + drag  | Translate point cloud                       |
 | Shift + left button + drag | Roll point cloud                            |
