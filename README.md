@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This is a system that covers all aspects of a 3D object recognition pipeline. It essentially consists of three main phases: [Data preprocessing](/preprocessing/README.md), [training](/training/README.md) and [inference](/inference/README.md). The individual steps are described in more detail in the respective directories. But first you have to place your raw data in this project.
+This is a system that covers all aspects of a 3D object detection pipeline. It essentially consists of three main phases: [Data preprocessing](/preprocessing/README.md), [training](/training/README.md) and [inference](/inference/README.md). The individual steps are described in more detail in the respective directories. But first you have to place your raw data in this project.
 
 ## Raw Data
 
