@@ -1,0 +1,6 @@
+pyrealsense2==2.33.1.1388
+pyyaml
+numpy
+opencv-python==4.2.0.32
+natsort
+open3d==0.9.0.0

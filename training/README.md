@@ -9,17 +9,13 @@ The host system must use a Linux distribution and must have Docker, CUDA and cuD
 ## Building and Running the Training Image
 
 Build the image running the Dockerfile `docker build -t 3dod.training .`                                                      
-Run the image running `docker run -p 3333:3333 --runtime nvidia 3dod.training`
+Run the image running `docker run -p 3333:3333 --mount type=bind,source="$(pwd)"/trainval,target=/usr/local/training/votenet/data/trainval/ --runtime nvidia 3dod.training`
 
 Open jupyter lab in your browser. To open locallay use `http://localhost:3333/3dod/`
 
 ## Preparing the training
 
-In jupyter lab navigate to `votenet/data/` and paste the `trainval/` directory from the preprocessing phase into it.
-
-To copy data from the host to a docker container use `docker cp trainval <container>:/usr/local/training/votenet/data/`
-
-Edit `model_util.py` (Line 16-23) and `utils.py` (Line 20) according to your dataset specs. To calculate the type mean size run `python3 data.py --compute_median_size`. 
+Navigate to `data/` and edit `data.py` (Line 41) `model_util.py` (Line 16-23) and `utils.py` (Line 20) according to your dataset specs. To calculate the type mean size run `python3 data.py --compute_median_size`. 
 
 Finally, to generate the ground truth votes run `python3 data.py --gen_data` in a terminal window.
 

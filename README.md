@@ -8,7 +8,7 @@ This is a system that covers all aspects of a 3D object detection pipeline. It e
 
 So far, this project supports two sensor devices: Intel RealSense and StereoLabs ZED. Exemplary data is provided for both devices. In the case of the RealSense, the data has not yet been extracted and is stored in `.bag` files. In case of the ZED, the data has already been extracted (RGB images, depth maps, point clouds). 
 
-Create a directory `raw_data/` and place the exemplary data in it.
+Navigate to `raw_data/` and place the exemplary data in the respective directory. 
 
 ## Special System Requirements
 

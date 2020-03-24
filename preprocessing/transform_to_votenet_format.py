@@ -18,7 +18,7 @@ LABEL_3D_DIR = DATA_DIR + 'label_3d/'
 CALIB_FILE = DATA_DIR + 'calib.yml'
 OBJECTCLASSES_FILE = DATA_DIR + 'objectclasses.json'
 
-DUMP_DIR = 'temp_trainval/'
+DUMP_DIR = 'trainval/'
 DUMP_CLOUD_DIR = DUMP_DIR + 'cloud/'
 DUMP_IMAGE_DIR = DUMP_DIR + 'image/'
 DUMP_LABEL_DIR = DUMP_DIR + 'label/'
@@ -153,14 +153,16 @@ def main():
     write_calib()
     write_split_files()
     shutil.copyfile(OBJECTCLASSES_FILE, DUMP_OBJECTCLASSES_FILE)
-    zipping.create_zip_archive_stage_four(args.compress)
-    shutil.rmtree(DUMP_DIR)
+
+    if args.compressed_data is not None:
+        zipping.create_zip_archive_stage_four(args.compress)
+        shutil.rmtree(DUMP_DIR)
     
 
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()  
-    parser.add_argument("compress", type=str, help="Specify archive name to compress transformed files.")
+    parser.add_argument("-c", "--compress", type=str, help="Specify archive name to compress transformed files.")
     parser.add_argument("-s", "--split", type=float, default = 0.9, help="Specify train/(test) split size.")
     parser.add_argument("-cd", "--compressed_data", type=str, help="Specify archive name to load extraced files from.")
     args = parser.parse_args()

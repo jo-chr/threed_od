@@ -21,4 +21,4 @@ RUN python3 setup.py install
 
 WORKDIR /usr/local/training
 
-CMD jupyter lab --allow-root --NotebookApp.base_url=/3dod --ip=0.0.0.0 --port=3333 --NotebookApp.token= --NotebookApp.password=sha1:23372d3670b8:0a7f90b5d7c203f373cdbe1eeaf152f05cbbf9be
+CMD jupyter lab --allow-root --NotebookApp.base_url=/3dod --ip=0.0.0.0 --port=3333 --NotebookApp.token=
