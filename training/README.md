@@ -11,4 +11,27 @@ The host system must use a Linux distribution and must have Docker, CUDA and cuD
 Build the image running the Dockerfile `docker build -t 3dod.training .`                                                      
 Run the image running `docker run -p 3333:3333 --runtime nvidia 3dod.training`
 
-## 
+Open jupyter lab in your browser. To open locallay use `http://localhost:3333/3dod/`
+
+## Preparing the training
+
+In jupyter lab navigate to `votenet/data/` and paste the `trainval/` directory from the preprocessing phase into it.
+
+To copy data from the host to a docker container use `docker cp trainval <container>:/usr/local/training/votenet/data/`
+
+Edit `model_util.py` (Line 16-23) and `utils.py` (Line 20) according to your dataset specs. To calculate the type mean size run `python3 data.py --compute_median_size`. 
+
+Finally, to generate the ground truth votes run `python3 data.py --gen_data` in a terminal window.
+
+## Training a Model
+
+To train a model navigate to `votenet/` and run `CUDA_VISIBLE_DEVICES=0 python3 train.py --dataset standard --log_dir <log_dir_name> --max_epoch <num_max_epoch> --batch_size <batch_size> --learning_rate <learning_rate>`
+
+Example: `CUDA_VISIBLE_DEVICES=0 python3 train.py --dataset standard --log_dir log --max_epoch 40 --batch_size 1 --learning_rate 0.01`
+
+TensorBoard can be started running `tensorboard --logdir=log --host=0.0.0.0 --port=4444 --path_prefix /tensorboard3dod/` in a new terminal.
+
+
+## Evaluating a Model
+
+To evaluate a trained model run `python3 eval.py --dataset standard --checkpoint_path log/checkpoint.tar --dump_dir eval --num_point 40000 --cluster_sampling seed_fps --use_3d_nms --use_cls_nms --per_class_proposal`
