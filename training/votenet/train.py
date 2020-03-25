@@ -15,6 +15,9 @@ At local machine:
     ssh -L 1237:localhost:6006 <server_name>
 Then go to local browser and type:
     localhost:1237
+
+Edited: Jonas Friederich
+Date: February, 2020
 """
 
 import os

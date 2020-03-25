@@ -4,6 +4,9 @@
 # LICENSE file in the root directory of this source tree.
 
 """ Evaluation routine for 3D object detection with SUN RGB-D and ScanNet.
+
+Edited: Jonas Friederich
+Date: February, 2020
 """
 
 import os
@@ -24,7 +27,7 @@ from ap_helper import APCalculator, parse_predictions, parse_groundtruths
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--model', default='votenet', help='Model file name [default: votenet]')
-parser.add_argument('--dataset', default='sunrgbd', help='Dataset name. sunrgbd or scannet. [default: sunrgbd]')
+parser.add_argument('--dataset', default='standard', help='Dataset name. sunrgbd or scannet. [default: sunrgbd]')
 parser.add_argument('--checkpoint_path', default=None, help='Model checkpoint path [default: None]')
 parser.add_argument('--dump_dir', default=None, help='Dump dir to save sample outputs [default: None]')
 parser.add_argument('--num_point', type=int, default=20000, help='Point Number [default: 20000]')

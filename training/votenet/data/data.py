@@ -3,14 +3,12 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-''' Helper class and functions for loading SUN RGB-D objects
+''' Helper class and functions for loading 3D data objects
 
 Author: Charles R. Qi
 Date: December, 2018
-
-Note: removed unused code for frustum preparation.
-Changed a way for data visualization (removed depdency on mayavi).
-Load depth with scipy.io
+Edited: Jonas Friederich
+Date: February, 2020
 '''
 
 import os
@@ -31,14 +29,11 @@ import utils
 OBJECTCLASSES_JSON = 'trainval/objectclasses.json'
 TRAIN_IDX_FILE = 'trainval/train_data_idx.txt'
 VAL_IDX_FILE = 'trainval/val_data_idx.txt'
-'''
+
 ### Load Objects
-with open(OBJECTCLASSES_JSON, 'r') as json_file:
+with open(os.path.join(BASE_DIR,OBJECTCLASSES_JSON), 'rb') as json_file:
     objectclasses = json.load(json_file)
-objectclasses = objectclasses[0]['Name']
-DEFAULT_TYPE_WHITELIST = [objectclasses]
-'''
-DEFAULT_TYPE_WHITELIST = ['box']
+DEFAULT_TYPE_WHITELIST = [objectclasses[0]['Name']]
 
 class data_object(object):
     ''' Load and parse object data '''
@@ -49,11 +44,11 @@ class data_object(object):
         self.split_dir = os.path.join(root_dir)
 
         if split == 'training':
-            #self.num_samples = sum(1 for line in open(TRAIN_IDX_FILE))
-            self.num_samples = 49
+            self.num_samples = sum(1 for line in open(os.path.join(BASE_DIR,TRAIN_IDX_FILE)))
+            #self.num_samples = 49
         elif split == 'testing':
-            #self.num_samples = sum(1 for line in open(VAL_IDX_FILE))
-            self.num_samples = 5
+            self.num_samples = sum(1 for line in open(os.path.join(BASE_DIR,VAL_IDX_FILE)))
+            #self.num_samples = 5
         else:
             print('Unknown split: %s' % (split))
             exit(-1)
@@ -314,6 +309,49 @@ def get_box3d_dim_statistics(idx_filename,
         median_box3d = np.median(box3d_list,0)
         print("\'%s\': np.array([%f,%f,%f])," % \
             (class_type, median_box3d[0]*2, median_box3d[1]*2, median_box3d[2]*2))
+
+def get_box3d_dim_statistics_auto(idx_filename,
+    type_whitelist=DEFAULT_TYPE_WHITELIST,
+    save_path=None):
+    """ Collect 3D bounding box statistics.
+    Used for computing mean box sizes. """
+
+    dataset = data_object('./trainval')
+    dimension_list = []
+    type_list = []
+    ry_list = []
+    data_idx_list = [int(line.rstrip()) for line in open(idx_filename)]
+    print('Generating type dimensions')
+    for data_idx in data_idx_list:
+        calib = dataset.get_calibration(data_idx) # 3 by 4 matrix
+        objects = dataset.get_label_objects(data_idx)
+        for obj_idx in range(len(objects)):
+            obj = objects[obj_idx]
+            if obj.classname not in type_whitelist: continue
+            heading_angle = -1 * np.arctan2(obj.orientation[1], obj.orientation[0])
+            dimension_list.append(np.array([obj.l,obj.w,obj.h])) 
+            type_list.append(obj.classname) 
+            ry_list.append(heading_angle)
+
+    import pickle as pickle                                                         ## vorher import cPickle as pickle
+    if save_path is not None:
+        with open(save_path,'wb') as fp:
+            pickle.dump(type_list, fp)
+            pickle.dump(dimension_list, fp)
+            pickle.dump(ry_list, fp)
+
+    # Get average box size for different catgories
+    box3d_pts = np.vstack(dimension_list)
+    for class_type in sorted(set(type_list)):
+        cnt = 0
+        box3d_list = []
+        for i in range(len(dimension_list)):
+            if type_list[i]==class_type:
+                cnt += 1
+                box3d_list.append(dimension_list[i])
+        median_box3d = np.median(box3d_list,0)
+    median_box3d = np.array([median_box3d[0]*2, median_box3d[1]*2, median_box3d[2]*2])
+    return class_type, median_box3d
 
 if __name__=='__main__':
     parser = argparse.ArgumentParser()

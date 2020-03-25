@@ -10,14 +10,35 @@ Date: October, 2017
 
 Updated by Charles R. Qi
 Date: December, 2018
-Note: removed basis loading.
+Edited: Jonas Friederich
+Date: February, 2020
 '''
 import numpy as np
+import sys
+import json
 import cv2
 import os
 import scipy.io as sio # to load .mat files for depth points
 
-type2class={'box':0}
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(BASE_DIR)
+
+OBJECTCLASSES_JSON = 'trainval/objectclasses.json'
+
+### Load Objects
+with open(os.path.join(BASE_DIR,OBJECTCLASSES_JSON), 'rb') as json_file:
+    objectclasses = json.load(json_file)
+
+DEFAULT_TYPE_WHITELIST = []
+i=0
+while i < len(objectclasses): 
+    DEFAULT_TYPE_WHITELIST.append(objectclasses[i]['Name']) 
+    i += 1
+
+type_raw = { i : DEFAULT_TYPE_WHITELIST[i] for i in range(0, len(DEFAULT_TYPE_WHITELIST) ) }
+TYPE = {y:x for x,y in type_raw.items()}
+
+type2class=TYPE
 class2type = {type2class[t]:t for t in type2class}
 
 
@@ -89,7 +110,12 @@ class DATA_Calibration(object):
     '''
 
     def __init__(self, calib_filepath):
-        lines = [line.rstrip() for line in open(calib_filepath)]
+        try:
+            lines = [line.rstrip() for line in open(calib_filepath)]
+        except (FileNotFoundError, IOError):
+            os.chdir(os.path.join(os.getcwd(),'data/'))
+            lines = [line.rstrip() for line in open(calib_filepath)]
+        #lines = [line.rstrip() for line in open(calib_filepath)]
         Rtilt = np.array([float(x) for x in lines[0].split(' ')])
         self.Rtilt = np.reshape(Rtilt, (3,3), order='F')
         K = np.array([float(x) for x in lines[1].split(' ')])

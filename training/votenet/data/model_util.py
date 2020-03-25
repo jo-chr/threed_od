@@ -3,24 +3,55 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+'''
+Edited: Jonas Friederich
+Date: February, 2020
+'''
+
 import numpy as np
 import sys
 import os
+import json
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(BASE_DIR)
 ROOT_DIR = os.path.dirname(BASE_DIR)
 sys.path.append(os.path.join(ROOT_DIR, 'utils'))
+import data
+
+TRAIN_IDX_FILE = 'trainval/train_data_idx.txt'
+OBJECTCLASSES_JSON = 'trainval/objectclasses.json'
+
+### Load Objects
+with open(os.path.join(BASE_DIR,OBJECTCLASSES_JSON), 'rb') as json_file:
+    objectclasses = json.load(json_file)
+
+DEFAULT_TYPE_WHITELIST = []
+i=0
+while i < len(objectclasses): 
+    DEFAULT_TYPE_WHITELIST.append(objectclasses[i]['Name']) 
+    i += 1
+
+type_raw = { i : DEFAULT_TYPE_WHITELIST[i] for i in range(0, len(DEFAULT_TYPE_WHITELIST) ) }
+TYPE = {y:x for x,y in type_raw.items()}
+
+#type_mean_size -- Update, für mehrere Objektklassen ausstehend
+a = data.get_box3d_dim_statistics_auto(os.path.join(BASE_DIR, TRAIN_IDX_FILE))
+TMS = {a[0]:a[1]}
 
 class DatasetConfig(object):
     def __init__(self):
-        self.num_class = 1
+        self.num_class = len(DEFAULT_TYPE_WHITELIST)
         self.num_heading_bin = 12
-        self.num_size_cluster = 1
+        self.num_size_cluster = len(DEFAULT_TYPE_WHITELIST)
 
-        self.type2class={'box':0}
+        #self.type2class={'box':0}
+        self.type2class = TYPE
         self.class2type = {self.type2class[t]:t for t in self.type2class}
-        self.type2onehotclass={'box':0}
-        self.type_mean_size = {'box': np.array([0.75,0.57,0.534])}
+        #self.type2onehotclass={'box':0}
+        self.type2onehotclass = TYPE
+        #self.type_mean_size = {'box': np.array([0.75,0.57,0.534])}
+        self.type_mean_size = TMS
+        os.chdir(ROOT_DIR)
 
         self.mean_size_arr = np.zeros((self.num_size_cluster, 3))
         for i in range(self.num_size_cluster):

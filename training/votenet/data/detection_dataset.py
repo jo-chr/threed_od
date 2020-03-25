@@ -18,7 +18,8 @@ The heading angle is a rotation rad from +X rotating towards -Y. (+X is 0, -Y is
 
 Author: Charles R. Qi
 Date: 2019
-
+Edited: Jonas Friederich
+Date: February, 2020
 """
 import os
 import sys
