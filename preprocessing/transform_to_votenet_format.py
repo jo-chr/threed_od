@@ -18,7 +18,7 @@ LABEL_3D_DIR = DATA_DIR + 'label_3d/'
 CALIB_FILE = DATA_DIR + 'calib.yml'
 OBJECTCLASSES_FILE = DATA_DIR + 'objectclasses.json'
 
-DUMP_DIR = 'trainval/'
+DUMP_DIR = '../training/trainval/'
 DUMP_CLOUD_DIR = DUMP_DIR + 'cloud/'
 DUMP_IMAGE_DIR = DUMP_DIR + 'image/'
 DUMP_LABEL_DIR = DUMP_DIR + 'label/'

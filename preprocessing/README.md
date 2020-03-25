@@ -60,3 +60,5 @@ For training, [VoteNet](https://github.com/facebookresearch/votenet) is used. In
 `python transform_to_votenet_format.py`
 
 The train/test split size can be adjusted using the `--split` flag (Float). 
+
+Now, place the 

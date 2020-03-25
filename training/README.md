@@ -9,7 +9,7 @@ The host system must use a Linux distribution and must have Docker, CUDA and cuD
 ## Building and Running the Training Image
 
 Build the image running the Dockerfile `docker build -t 3dod.training .` inside the `training/` directory.                                             
-Run the image using `docker run -p 3333:3333 --mount type=bind,source="$(pwd)"/votenet/data/trainval,target=/usr/local/training/votenet/data/trainval/ --runtime nvidia 3dod.training`
+Run the image using `docker run -p 3333:3333 -p 4444:4444 --mount type=bind,source="$(pwd)"/trainval,target=/usr/local/training/votenet/data/trainval/ --runtime nvidia 3dod.training`
 
 Open jupyter lab in your browser. To open locallay use `http://localhost:3333/3dod/`
 
@@ -28,4 +28,4 @@ TensorBoard can be started running `tensorboard --logdir=log --host=0.0.0.0 --po
 
 ## Evaluating a Model
 
-To evaluate a trained model run `python3 eval.py --dataset standard --checkpoint_path log/checkpoint.tar --dump_dir eval --num_point 40000 --cluster_sampling seed_fps --use_3d_nms --use_cls_nms --per_class_proposal`
+To evaluate a trained model run `python3 eval.py --checkpoint_path log/checkpoint.tar --dump_dir eval --num_point 40000 --cluster_sampling seed_fps --use_3d_nms --use_cls_nms --per_class_proposal`
