@@ -2,11 +2,38 @@
 	"models":[
 		{
 			"id": "1",
-			"name":"box3d",
+			"name":"box3d_robo",
 			"type":"3d_detection",
-			"model_path":"box3d/box3d.tar",
+			"model_path":"box3d_robo/box3d_robo.tar",
 			"classes":{
 				 "0":"box"
+			}
+		},
+		{
+			"id": "2",
+			"name":"box3d_bmw",
+			"type":"3d_detection",
+			"model_path":"box3d_bmw/box3d_bmw.tar",
+			"classes":{
+				 "0":"box"
+			}
+		},
+		{
+			"id": "3",
+			"name":"sunrgbd",
+			"type":"3d_detection",
+			"model_path":"sunrgbd/sunrgbd.tar",
+			"classes":{
+				 "0":"bed",
+				 "1":"table",
+			         "2":"sofa",
+				 "3":"chair",
+				 "4":"toilet",
+				 "5":"desk",
+				 "6":"dresser",
+				 "7":"night_stand",
+				 "8":"bookshelf",
+				 "9":"bathtub"
 			}
 		}
 	]

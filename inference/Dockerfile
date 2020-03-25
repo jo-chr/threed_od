@@ -9,6 +9,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends gnupg2 curl ca-
     apt-get purge --autoremove -y curl && \
     rm -rf /var/lib/apt/lists/*
 
+RUN apt-get update && apt-get install -y libglib2.0-0 libsm6 libxext6 libxrender-dev libgl1-mesa-glx
+
 ENV CUDA_VERSION 10.0.130
 ENV CUDA_PKG_VERSION 10-0=$CUDA_VERSION-1
 

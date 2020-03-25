@@ -229,13 +229,11 @@ def detect_cloud():
     logger.debug(pred_map_cls)
     print('Finished detection. %d object detected.'%(len(pred_map_cls[0])))
 
-    print(pred_map_cls[0][0][1])
-
+    ### To be extended for multiple objects and detections
     pcd = o3d.geometry.PointCloud()
     pcd.points = o3d.utility.Vector3dVector(pred_map_cls[0][0][1])
     pcd.rotate(pcd.get_rotation_matrix_from_xyz([300,0,0]), center=False)
     coords = np.asarray(pcd.points)
-    print(coords)
 
     output = []
     
@@ -386,4 +384,5 @@ if __name__ == '__main__':
     else:
         app.run(debug=True)
     '''
+    
 
