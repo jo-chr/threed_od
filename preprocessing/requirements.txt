@@ -3,4 +3,4 @@ pyyaml
 numpy
 opencv-python==4.2.0.32
 natsort
-open3d==0.9.0.0
+open3d==0.10.0.0
