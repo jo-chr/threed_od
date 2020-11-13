@@ -51,6 +51,18 @@ def isRotationMatrix(R):
     return n < 1e-6
 
 
+def abs2rel_rotation(abs_rotation: float) -> float:
+    """ Convert absolute rotation 0..360° into -pi..+pi from x-Axis.
+
+    :param abs_rotation: Counterclockwise rotation from x-axis around z-axis
+    :return: Relative rotation from x-axis around z-axis
+    """
+    rel_rotation = abs_rotation
+    if rel_rotation > np.pi:
+        rel_rotation = rel_rotation - 2 * np.pi
+    return rel_rotation
+
+
 # Calculates rotation matrix to euler angles
 def matrix_to_angles(R):
     assert (isRotationMatrix(R))
@@ -65,8 +77,9 @@ def matrix_to_angles(R):
         x = np.arctan2(-R[1, 2], R[1, 1])
         y = np.arctan2(-R[2, 0], sy)
         z = 0
-
-    return np.array([x, y, z])
+    
+    abs_rotations = [x, y, z]
+    return list(map(abs2rel_rotation, abs_rotations))
 
 
 def get_rot_bb_values(obj):
@@ -74,7 +87,7 @@ def get_rot_bb_values(obj):
     pcd = o3d.io.read_point_cloud(obj)
     bb = pcd.get_oriented_bounding_box()
     bb_center = bb.get_center()
-    bb_wlh = bb.extent / 2
+    bb_wlh = bb.extent
     bb_angles = matrix_to_angles(bb.R)
     print("Angles: " + str(bb_angles))
     return bb_center, bb_wlh, bb_angles
