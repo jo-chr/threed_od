@@ -78,7 +78,7 @@ def matrix_to_angles(R):
         y = np.arctan2(-R[2, 0], sy)
         z = 0
     
-    abs_rotations = [x, y, z]
+    abs_rotations = [-x, y, z]
     return list(map(abs2rel_rotation, abs_rotations))
 
 
