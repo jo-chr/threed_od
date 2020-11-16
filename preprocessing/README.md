@@ -49,7 +49,9 @@ Run `python label_data.py` to annotate the processed point clouds. Following, th
 | c                          | Crop point cloud                            |
 | q                          | Finish annotation process for one object    |
 
-Crop the point cloud until the object of interest is left. After each cropping iteration, save the cropped point clouds in the `preprocessing/` directory. Once you are happy with the result, press q. You are prompted to enter the object class name and if there are any other objects within the current point cloud. 
+Crop the point cloud until the object of interest is left. After each cropping iteration, save the cropped point clouds in the `preprocessing/` directory. Once you are happy with the result, press q. You are prompted to enter the object class name and if there are any other objects within the current point cloud.
+
+Users can generate rotated bounding boxes with (x-, y- and z-rotation) using the `-r` or `--rotations` flag. The rotations are relative counterclockwise angles around each axis in radians (e.g., x=+π means a 90° rotation from the positive x- to the negative y-axis.).
 
 For 2D annotations, use the Robotron `.json` label format and dump the labels in a directory called `label_2d/`.
 
